@@ -25,4 +25,28 @@ public class TodoRepositoryInMem  {
 	public void deleteAll() {
 		todos.clear();
 	}
+
+	public Todo findObjectById(long id) {
+		return this.todos.stream()
+		.filter(td -> td.getId() == id)
+		.findFirst().orElse(null);
+	}
+
+	public Todo setItemToIsDone(long id, boolean bool) {
+		Todo result = this.findObjectById(id);
+		if (result != null) {
+			result.setDone(bool);
+			return result;
+		}
+		return null;
+}
+
+	public Todo setItemText(long id, String text) {
+		Todo result = this.findObjectById(id);
+		if (result != null) {
+			result.setText(text);
+			return result;
+		}
+		return null;
+	}
 }

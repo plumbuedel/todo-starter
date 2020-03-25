@@ -5,6 +5,7 @@ import java.util.Objects;
 public final class Todo {
 	private String text;
 	private Long id;
+	private boolean done = false;
 
 	public Todo (String text, Long id) {
 		this.text = text;
@@ -45,5 +46,13 @@ public final class Todo {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, text);
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 }

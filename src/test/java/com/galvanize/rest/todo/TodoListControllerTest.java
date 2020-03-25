@@ -77,6 +77,64 @@ final class TodoListControllerTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.text").value("add a todo"))
 				.andExpect(jsonPath("$.id").isNumber());
+	}
 
+	@Test
+	void canReturnAllTodos() throws Exception {
+		final Todo todoOne = new Todo("start api");
+		final Todo todoTwo = new Todo("finish api");
+		todoRepository.save(todoOne);
+		todoRepository.save(todoTwo);
+		final List<Todo> expected = todoRepository.findAll();
+		String json = mvc.perform(get("/api/todo")
+		.accept(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(content().json(objectMapper.writeValueAsString(expected)))
+		// Get response as string to parse below for ObjectMapper Example
+		.andReturn().getResponse().getContentAsString();
+		List<Todo> actual = objectMapper.readValue(json, new TypeReference<List<Todo>>() {});
+		assertThat(actual.size(), equalTo(2));
+    	assertThat(actual, is(expected));
+	}
+
+	@Test
+	void canMarkTodoAsDone() throws Exception {
+		final Todo todo = new Todo("finish api");
+		todoRepository.save(todo);
+		final String path = todo.getId().toString();
+		final String payload = "\"true\"";
+
+		mvc.perform(get("/api/todo/" + path)
+		.characterEncoding("utf-8")
+		.accept(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.done").value(false));
+
+		mvc.perform(put("/api/todo/done/" + path)
+		.contentType(MediaType.APPLICATION_JSON)
+		.accept(MediaType.APPLICATION_JSON)
+		.characterEncoding("utf-8")
+		.content(payload))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.id").value(path))
+		.andExpect(jsonPath("$.text").value("finish api"))
+		.andExpect(jsonPath("$.done").value(true));
+	} 
+	@Test
+	void canChangeTodoText()  throws Exception {
+
+		final Todo todo = new Todo("finish api");
+		todoRepository.save(todo);
+		final String path = todo.getId().toString();
+		final String payload = "\"start api\"";
+
+		mvc.perform(put("/api/todo/change/" + path)
+		.characterEncoding("utf-8")
+		.contentType(MediaType.APPLICATION_JSON)
+		.accept(MediaType.APPLICATION_JSON)
+		.content(payload))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.id").value(path))
+		.andExpect(jsonPath("$.text").value("start api"));
 	}
 }
