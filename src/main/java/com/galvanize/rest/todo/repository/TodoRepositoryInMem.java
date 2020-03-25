@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TodoRepositoryInMem  {
+public class TodoRepositoryInMem {
 	private List<Todo> todos = new ArrayList<>();
 	private Long nextId = 0L;
 
@@ -14,12 +14,23 @@ public class TodoRepositoryInMem  {
 		return todos;
 	}
 
-	public Todo save(Todo todo) {
-		if (todo.getId() == null) {
-			todo.setId(nextId++);
-			todos.add(todo);
+	public Todo save(Todo item) {
+		if (item.getId() == null) {
+			item.setId(nextId++);
 		}
-		return todo;
+		this.todos.add(item);
+		return item;
+
+	}
+
+	public List<Todo> save(Todo... todo) {
+		for (Todo item : todo) {
+			if (item.getId() == null) {
+				item.setId(nextId++);
+			}
+			this.todos.add(item);
+		}
+		return this.todos;
 	}
 
 	public void deleteAll() {
@@ -27,9 +38,7 @@ public class TodoRepositoryInMem  {
 	}
 
 	public Todo findObjectById(long id) {
-		return this.todos.stream()
-		.filter(td -> td.getId() == id)
-		.findFirst().orElse(null);
+		return this.todos.stream().filter(td -> td.getId() == id).findFirst().orElse(null);
 	}
 
 	public Todo setItemToIsDone(long id, boolean bool) {
@@ -39,7 +48,7 @@ public class TodoRepositoryInMem  {
 			return result;
 		}
 		return null;
-}
+	}
 
 	public Todo setItemText(long id, String text) {
 		Todo result = this.findObjectById(id);

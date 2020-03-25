@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.galvanize.rest'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '1.8'
 
 repositories {
 	mavenCentral()
@@ -18,7 +18,7 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'org.hamcrest:hamcrest:2.2'
-
+	compileOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 test {

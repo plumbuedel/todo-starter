@@ -49,7 +49,7 @@ public final class TodoListController {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Jason sollte nicht leer sein... du Noob");
 			return null;
 		}
-		Todo newTodo = new Todo(todoItem.get("text").textValue());
+		Todo newTodo = new Todo(body);
 		this.todoRepository.save(newTodo);
 		response.setStatus(HttpServletResponse.SC_CREATED);
 		return newTodo;
